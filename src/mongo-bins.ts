@@ -1,3 +1,5 @@
+import { IMongoDBDownloadOptions, MongoDBDownload } from "mongodb-download";
+
 const Debug: any = require('debug');
 import {resolve as resolvePath} from 'path';
 import {SpawnOptions, ChildProcess, spawn as spawnChild} from 'child_process';
@@ -15,11 +17,13 @@ export class MongoBins {
   constructor(
     command: string, 
     public commandArguments: string[] = [],
-    public spawnOptions: SpawnOptions = {}
+    public spawnOptions: SpawnOptions = {},
+    downloadOptions: Partial<IMongoDBDownloadOptions> = {}
   ) {
     this.debug = Debug(`mongodb-prebuilt-MongoBins`);
     this.command = command;
-    this.mongoDBPrebuilt = new MongoDBPrebuilt();
+    const mongoDbDownload = new MongoDBDownload(downloadOptions);
+    this.mongoDBPrebuilt = new MongoDBPrebuilt(mongoDbDownload);
   }
   
   run(): Promise<boolean> {
