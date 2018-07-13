@@ -15,17 +15,23 @@ export class MongoBins {
   mongoDBPrebuilt: MongoDBPrebuilt;
 
   constructor(
-    command: string, 
+    command: string,
     public commandArguments: string[] = [],
     public spawnOptions: SpawnOptions = {},
     downloadOptions: Partial<IMongoDBDownloadOptions> = {}
   ) {
     this.debug = Debug(`mongodb-prebuilt-MongoBins`);
     this.command = command;
-    const mongoDbDownload = new MongoDBDownload(downloadOptions);
-    this.mongoDBPrebuilt = new MongoDBPrebuilt(mongoDbDownload);
+
+    const isOptionsEmpty = downloadOptions === {};
+    if (isOptionsEmpty) {
+      this.mongoDBPrebuilt = new MongoDBPrebuilt();
+    } else {
+      const mongoDbDownload = new MongoDBDownload(downloadOptions);
+      this.mongoDBPrebuilt = new MongoDBPrebuilt(mongoDbDownload);
+    }
   }
-  
+
   run(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.runCommand().then(() => {
@@ -44,12 +50,12 @@ export class MongoBins {
       });
     });
   }
-  
+
   runCommand(): Promise<boolean>  {
     return new Promise<boolean>((resolve, reject) => {
       let getCommandPromise: Promise<string> = this.getCommand();
       let getCommandArgumentsPromise: Promise<string[]> = this.getCommandArguments();
-      
+
       Promise.all([
         getCommandPromise,
         getCommandArgumentsPromise
@@ -65,7 +71,7 @@ export class MongoBins {
 
     });
   }
-  
+
   getCommand(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.mongoDBPrebuilt.getBinPath().then(binPath => {
