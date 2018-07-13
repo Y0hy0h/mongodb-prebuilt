@@ -71,8 +71,8 @@ mongodHelper.run().then((started) => {
 
 ## Download Options
 
-You can pass download options to `MongodHelper`. These the [options that
-`mongodb-download` accepts](https://github.com/winfinit/mongodb-download#options).
+You can pass all download options to `MongodHelper` [that `mongodb-download`
+accepts](https://github.com/winfinit/mongodb-download#options).
 
 ```javascript
 new MongodHelper(['--port', "27018"], {
