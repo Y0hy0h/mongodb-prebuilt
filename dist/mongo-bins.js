@@ -1,30 +1,40 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var mongodb_download_1 = require("mongodb-download");
 var Debug = require('debug');
 var path_1 = require("path");
 var child_process_1 = require("child_process");
 var mongodb_prebuilt_1 = require("./mongodb-prebuilt");
 var mongodb_supervise_1 = require("./mongodb-supervise");
 var MongoBins = /** @class */ (function () {
-    function MongoBins(command, commandArguments, spawnOptions) {
+    function MongoBins(command, commandArguments, spawnOptions, downloadOptions) {
         if (commandArguments === void 0) { commandArguments = []; }
         if (spawnOptions === void 0) { spawnOptions = {}; }
+        if (downloadOptions === void 0) { downloadOptions = {}; }
         this.commandArguments = commandArguments;
         this.spawnOptions = spawnOptions;
         this.debug = Debug("mongodb-prebuilt-MongoBins");
         this.command = command;
-        this.mongoDBPrebuilt = new mongodb_prebuilt_1.MongoDBPrebuilt();
+        var isOptionsEmpty = downloadOptions === {};
+        if (isOptionsEmpty) {
+            this.mongoDBPrebuilt = new mongodb_prebuilt_1.MongoDBPrebuilt();
+        }
+        else {
+            var mongoDbDownload = new mongodb_download_1.MongoDBDownload(downloadOptions);
+            this.mongoDBPrebuilt = new mongodb_prebuilt_1.MongoDBPrebuilt(mongoDbDownload);
+        }
     }
     MongoBins.prototype.run = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             _this.runCommand().then(function () {
-                _this.mongoSupervice = new mongodb_supervise_1.MongoSupervise(_this.childProcess.pid);
-                _this.mongoSupervice.run().then(function () {
+                _this.mongoSupervise = new mongodb_supervise_1.MongoSupervise(_this.childProcess.pid);
+                _this.mongoSupervise.run().then(function () {
                     // all good
                 }, function (e) {
                     // didnt start
                     _this.debug("run() Supervise process didn't start: " + e);
+                    reject(e);
                 });
                 resolve(true);
             }, function (e) {
@@ -46,7 +56,7 @@ var MongoBins = /** @class */ (function () {
                 var commandArguments = promiseValues[1];
                 _this.childProcess = child_process_1.spawn(command, commandArguments, _this.spawnOptions);
                 _this.childProcess.on('close', function () {
-                    _this.mongoSupervice.monitorChild.kill();
+                    _this.mongoSupervise.monitorChild.kill();
                 });
                 resolve(true);
             });

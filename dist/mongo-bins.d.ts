@@ -1,4 +1,5 @@
 /// <reference types="node" />
+import { IMongoDBDownloadOptions } from "mongodb-download";
 import { SpawnOptions, ChildProcess } from 'child_process';
 import { MongoDBPrebuilt } from './mongodb-prebuilt';
 import { MongoSupervise } from './mongodb-supervise';
@@ -9,9 +10,9 @@ export declare class MongoBins {
     execPath: string;
     debug: any;
     childProcess: ChildProcess;
-    mongoSupervice: MongoSupervise;
+    mongoSupervise: MongoSupervise;
     mongoDBPrebuilt: MongoDBPrebuilt;
-    constructor(command: string, commandArguments?: string[], spawnOptions?: SpawnOptions);
+    constructor(command: string, commandArguments?: string[], spawnOptions?: SpawnOptions, downloadOptions?: Partial<IMongoDBDownloadOptions>);
     run(): Promise<boolean>;
     runCommand(): Promise<boolean>;
     getCommand(): Promise<string>;

@@ -4,11 +4,11 @@ var mongo_bins_1 = require("./mongo-bins");
 var Debug = require('debug');
 var COMMAND = "mongod";
 var MongodHelper = /** @class */ (function () {
-    function MongodHelper(commandArguments) {
+    function MongodHelper(commandArguments, downloadOptions) {
         if (commandArguments === void 0) { commandArguments = []; }
         this.resolveLink = function () { };
         this.rejectLink = function () { };
-        this.mongoBin = new mongo_bins_1.MongoBins(COMMAND, commandArguments);
+        this.mongoBin = new mongo_bins_1.MongoBins(COMMAND, commandArguments, undefined, downloadOptions);
         this.debug = Debug("mongodb-prebuilt-MongodHelper");
     }
     MongodHelper.prototype.run = function () {

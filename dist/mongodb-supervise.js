@@ -10,7 +10,7 @@ var MongoSupervise = /** @class */ (function () {
         this.parentPid = process.pid;
         this.command = "mongo-supervise.js";
         this.platform = process.platform;
-        this.debug = Debug("mongodb-prebuilt-MongoSupervice");
+        this.debug = Debug("mongodb-prebuilt-MongoSupervise");
     }
     MongoSupervise.prototype.getSuperviseCommand = function () {
         var killerCommand = path_1.resolve(this.execPath, this.command);
@@ -27,7 +27,6 @@ var MongoSupervise = /** @class */ (function () {
                 _this.runOnLinux();
             }
             _this.monitorChild.on('close', function (code) {
-                //console.log('close of monitor child', code);
                 _this.debug('Exiting child monitor process with code:', code);
             });
             resolve(true);
